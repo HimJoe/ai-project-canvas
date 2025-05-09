@@ -18,7 +18,7 @@ The AI Project Canvas Builder helps AI practitioners, project managers, and stak
 
 ### Online Version
 
-Access the tool directly at: [https://yourusername.github.io/ai-project-canvas](https://yourusername.github.io/ai-project-canvas)
+Access the tool directly at: [[https://yourusername.github.io/ai-project-canvas](https://yourusername.github.io/ai-project-canvas)](https://github.com/HimJoe/ai-project-canvas/blob/main/README.md)
 
 ### Local Development
 
