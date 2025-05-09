@@ -1,0 +1,233 @@
+/* Main application styles */
+:root {
+    --primary-color: #2a6ec8;
+    --secondary-color: #4b94f3;
+    --light-bg: #f5f7fa;
+    --border-color: #d1d9e6;
+    --text-color: #333;
+    --light-text: #7a8599;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    line-height: 1.6;
+    color: var(--text-color);
+    background-color: var(--light-bg);
+}
+
+.container {
+    display: flex;
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: 20px;
+    gap: 20px;
+    height: calc(100vh - 140px);
+}
+
+header {
+    background-color: white;
+    padding: 15px 30px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+}
+
+.header-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+.logo h1 {
+    font-size: 1.6rem;
+    margin-bottom: 5px;
+    color: var(--primary-color);
+}
+
+.logo p {
+    font-size: 0.9rem;
+    color: var(--light-text);
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn {
+    padding: 8px 15px;
+    background-color: white;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+
+.btn:hover {
+    background-color: #f0f2f5;
+}
+
+.btn.primary {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.btn.primary:hover {
+    background-color: var(--secondary-color);
+}
+
+select {
+    padding: 8px 15px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-size: 0.9rem;
+}
+
+.input-section {
+    width: 40%;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.preview-section {
+    width: 60%;
+    background-color: white;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    padding: 20px;
+    overflow: auto;
+}
+
+.tabs {
+    display: flex;
+    overflow-x: auto;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.tab {
+    padding: 10px 15px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 0.9rem;
+    white-space: nowrap;
+}
+
+.tab.active {
+    border-bottom: 2px solid var(--primary-color);
+    color: var(--primary-color);
+    font-weight: 500;
+}
+
+.tab-content {
+    padding: 20px;
+    overflow-y: auto;
+    flex-grow: 1;
+}
+
+.tab-pane {
+    display: none;
+}
+
+.tab-pane.active {
+    display: block;
+}
+
+h2 {
+    font-size: 1.4rem;
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+.help-text {
+    color: var(--light-text);
+    margin-bottom: 15px;
+    font-size: 0.9rem;
+}
+
+input[type="text"], textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    font-family: inherit;
+    font-size: 0.95rem;
+    margin-bottom: 20px;
+}
+
+textarea {
+    resize: vertical;
+}
+
+.example-box {
+    background-color: #f0f7ff;
+    border: 1px solid #d0e1f9;
+    border-radius: 4px;
+    padding: 15px;
+    margin-top: 15px;
+    font-size: 0.9rem;
+}
+
+.example-box h4 {
+    margin-bottom: 10px;
+    color: var(--primary-color);
+}
+
+footer {
+    text-align: center;
+    padding: 20px;
+    font-size: 0.8rem;
+    color: var(--light-text);
+    background-color: white;
+    border-top: 1px solid var(--border-color);
+}
+
+.notification {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    padding: 10px 20px;
+    background-color: #4CAF50;
+    color: white;
+    border-radius: 4px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+    z-index: 1000;
+    opacity: 1;
+    transition: opacity 0.5s;
+}
+
+@media (max-width: 1024px) {
+    .container {
+        flex-direction: column;
+        height: auto;
+    }
+    
+    .input-section, .preview-section {
+        width: 100%;
+    }
+    
+    .preview-section {
+        max-height: 600px;
+    }
+    
+    .actions {
+        flex-wrap: wrap;
+    }
+    
+    .header-content {
+        flex-direction: column;
+        gap: 15px;
+    }
+}

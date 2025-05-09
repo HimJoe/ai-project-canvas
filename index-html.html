@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Project Canvas Builder</title>
+    <link rel="stylesheet" href="css/main.css">
+    <link rel="stylesheet" href="css/canvas.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+</head>
+<body>
+    <header>
+        <div class="header-content">
+            <div class="logo">
+                <h1>AI Project Canvas Builder</h1>
+                <p>Build structured implementation plans for AI projects</p>
+            </div>
+            <div class="actions">
+                <select id="templateSelect">
+                    <option value="">Choose a Template...</option>
+                    <option value="retail">RetailAssist: Customer Service AI</option>
+                    <option value="finance">FinSummarize: Financial Document AI</option>
+                    <option value="manufacturing">VisionFix: Defect Detection AI</option>
+                    <option value="blank">Blank Canvas</option>
+                </select>
+                <button id="saveBtn" class="btn">Save Draft</button>
+                <button id="loadBtn" class="btn">Load Draft</button>
+                <button id="exportBtn" class="btn primary">Export PDF</button>
+            </div>
+        </div>
+    </header>
+    
+    <main>
+        <div class="container">
+            <section class="input-section">
+                <div class="tabs">
+                    <button class="tab active" data-section="project">Project</button>
+                    <button class="tab" data-section="data">Data</button>
+                    <button class="tab" data-section="skills">Skills</button>
+                    <button class="tab" data-section="value">Value</button>
+                    <button class="tab" data-section="integration">Integration</button>
+                    <button class="tab" data-section="customers">Customers</button>
+                    <button class="tab" data-section="output">Output</button>
+                    <button class="tab" data-section="stakeholders">Stakeholders</button>
+                    <button class="tab" data-section="cost">Cost</button>
+                    <button class="tab" data-section="revenue">Revenue</button>
+                </div>
+                
+                <div class="tab-content">
+                    <!-- Project title section -->
+                    <div class="tab-pane active" id="project-section">
+                        <h2>Project Title</h2>
+                        <p class="help-text">Enter a descriptive title for your AI project.</p>
+                        <input type="text" id="project-title" placeholder="e.g., RetailAssist: Agentic AI for Customer Service">
+                        <div class="example-box">
+                            <h4>Example</h4>
+                            <p>"VisionFix: Multimodal AI for Defect Detection at PrecisionTech"</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Data section -->
+                    <div class="tab-pane" id="data-section">
+                        <h2>Data</h2>
+                        <p class="help-text">What data will your AI project require? List all relevant data sources.</p>
+                        <textarea id="data-content" rows="15" placeholder="• Customer data
+• Transaction records
+• Product information
+etc."></textarea>
+                        <div class="example-box">
+                            <h4>Example from RetailAssist</h4>
+                            <p>• Customer interaction transcripts (chat, email, phone)
+• Order history and details from e-commerce platform
+• Inventory and product information (12,000+ SKUs)
+• Shipping and delivery tracking data</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Skills section -->
+                    <div class="tab-pane" id="skills-section">
+                        <h2>Skills</h2>
+                        <p class="help-text">What skills are needed to develop and implement this AI project?</p>
+                        <textarea id="skills-content" rows="15" placeholder="• Technical skills (ML, data engineering, etc.)
+• Domain expertise
+• Project management skills
+etc."></textarea>
+                        <div class="example-box">
+                            <h4>Example</h4>
+                            <p>• Technical Skills: Natural language processing, agentic AI development, systems integration
+• Domain Skills: Customer service operations, retail policies
+• Project Skills: Change management, governance framework design</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Value section -->
+                    <div class="tab-pane" id="value-section">
+                        <h2>Value Proposition</h2>
+                        <p class="help-text">What value will your AI project create? What problems will it solve?</p>
+                        <textarea id="value-content" rows="15" placeholder="• Primary value (key benefits)
+• Secondary benefits
+• Strategic advantages
+etc."></textarea>
+                        <div class="example-box">
+                            <h4>Example</h4>
+                            <p>• 24/7 consistent customer service availability
+• Reduced customer wait times by 85%
+• Handle 65% of inquiries without human intervention
+• Improve first-contact resolution from 58% to 80%+</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Integration section -->
+                    <div class="tab-pane" id="integration-section">
+                        <h2>Integration</h2>
+                        <p class="help-text">How will the AI system integrate with existing systems and processes?</p>
+                        <textarea id="integration-content" rows="15" placeholder="• Systems integration
+• Process integration
+• Data pipelines
+etc."></textarea>
+                        <div class="example-box">
+                            <h4>Example</h4>
+                            <p>• Connect to 12 operational systems including legacy platforms
+• Multiple customer interaction channels (chat, phone, email, social)
+• Customer authentication workflows
+• Escalation protocols to human agents</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Customers section -->
+                    <div class="tab-pane" id="customers-section">
+                        <h2>Customers</h2>
+                        <p class="help-text">Who are the end users and beneficiaries of your AI project?</p>
+                        <textarea id="customers-content" rows="15" placeholder="• Primary users
+• Secondary users
+• End beneficiaries
+etc."></textarea>
+                        <div class="example-box">
+                            <h4>Example</h4>
+                            <p>• Primary Customers: Retail customers (B2C), 1.2 million active customers
+• Internal Customers: 75 customer service representatives, contact center managers
+• Executive leadership team, store managers</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Output section -->
+                    <div class="tab-pane" id="output-section">
+                        <h2>Output</h2>
+                        <p class="help-text">What key metrics are you optimizing for? What defines success?</p>
+                        <textarea id="output-content" rows="15" placeholder="• Performance metrics
+• Quality metrics
+• Business impact metrics
+etc."></textarea>
+                        <div class="example-box">
+                            <h4>Example</h4>
+                            <p>• Customer satisfaction scores (target: 3.7 to 4.5+)
+• First-contact resolution rate (target: 80%+)
+• AI handle rate (target: 65% of all inquiries)
+• Cost per interaction (target: 40% reduction)</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Stakeholders section -->
+                    <div class="tab-pane" id="stakeholders-section">
+                        <h2>Stakeholders</h2>
+                        <p class="help-text">Who are the key stakeholders involved in or affected by this project?</p>
+                        <textarea id="stakeholders-content" rows="15" placeholder="• Project leaders
+• Key decision makers
+• Critical stakeholders
+etc."></textarea>
+                        <div class="example-box">
+                            <h4>Example</h4>
+                            <p>• Key Decision Makers: Chief Digital Officer, Customer Service Director, CIO/CTO
+• Critical Stakeholders: Customer service representatives, IT support teams, compliance team
+• Customer advisory panel</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Cost section -->
+                    <div class="tab-pane" id="cost-section">
+                        <h2>Cost</h2>
+                        <p class="help-text">What costs will the project incur during development and ongoing operations?</p>
+                        <textarea id="cost-content" rows="15" placeholder="• Development costs
+• Implementation costs
+• Ongoing costs
+etc."></textarea>
+                        <div class="example-box">
+                            <h4>Example</h4>
+                            <p>• Development Costs: AI system ($1.5M), systems integration ($750K)
+• Implementation Costs: Training ($300K), testing ($200K)
+• Ongoing Costs: Maintenance ($150K/year), monitoring ($200K/year)
+• Total Investment: $3.2M over 12 months</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Revenue section -->
+                    <div class="tab-pane" id="revenue-section">
+                        <h2>Revenue/Savings</h2>
+                        <p class="help-text">How will the project generate revenue or cost savings?</p>
+                        <textarea id="revenue-content" rows="15" placeholder="• Direct cost savings
+• Operational improvements
+• New revenue opportunities
+• ROI analysis
+etc."></textarea>
+                        <div class="example-box">
+                            <h4>Example</h4>
+                            <p>• Direct Cost Savings: Reduced staffing costs ($1.8M annually)
+• Revenue Impact: Increased customer retention (1% = $2.2M)
+• ROI Analysis: 14-month investment recovery, 3-year ROI: 480%</p>
+                        </div>
+                    </div>
+                </div>
+            </section>
+            
+            <section class="preview-section">
+                <div class="canvas-preview" id="canvasPreview">
+                    <!-- Canvas preview will be rendered here -->
+                </div>
+            </section>
+        </div>
+    </main>
+    
+    <footer>
+        <p>&copy; 2025 AI Project Canvas | <a href="https://github.com/yourusername/ai-project-canvas" target="_blank">View on GitHub</a></p>
+    </footer>
+    
+    <script src="js/app.js"></script>
+    <script src="js/canvas.js"></script>
+    <script src="js/export.js"></script>
+    <script src="js/storage.js"></script>
+</body>
+</html>
