@@ -3,229 +3,1033 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Project Canvas Builder</title>
-    <link rel="stylesheet" href="css/main.css">
-    <link rel="stylesheet" href="css/canvas.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <title>AI Project Canvas - With Reference Examples</title>
+    <style>
+        /* Reset and base styles */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        /* Canvas container */
+        .canvas-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            padding: 20px;
+        }
+        
+        /* Header styles */
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        
+        .header h1 {
+            font-size: 2.2em;
+            color: #2a6ec8;
+            margin-bottom: 5px;
+        }
+        
+        .header p {
+            color: #7a8599;
+            font-size: 0.9em;
+        }
+        
+        /* Title section */
+        .title-section {
+            display: flex;
+            margin-bottom: 30px;
+            gap: 20px;
+        }
+        
+        .title-section .label {
+            flex: 1;
+            font-size: 1.4em;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+        }
+        
+        .title-section .input {
+            flex: 3;
+        }
+        
+        .title-section input {
+            width: 100%;
+            padding: 15px;
+            font-size: 1.2em;
+            border: 1px solid #d1d9e6;
+            border-radius: 4px;
+        }
+        
+        /* Canvas grid */
+        .row {
+            display: flex;
+            margin-bottom: 20px;
+            gap: 20px;
+        }
+        
+        .cell {
+            flex: 1;
+            border: 1px solid #d1d9e6;
+            border-radius: 5px;
+            padding: 15px;
+            background-color: #ffffff;
+            position: relative;
+        }
+        
+        .cell-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 5px;
+            border-bottom: 1px solid #e9ecef;
+        }
+        
+        .cell-title {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #2a6ec8;
+            margin: 0;
+        }
+        
+        .icon {
+            width: 24px;
+            height: 24px;
+            font-size: 1.5em;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #7a8599;
+        }
+        
+        .prompt {
+            color: #7a8599;
+            font-style: italic;
+            margin-bottom: 10px;
+            font-size: 0.9em;
+        }
+        
+        textarea {
+            width: 100%;
+            min-height: 120px;
+            border: 1px solid #d1d9e6;
+            border-radius: 4px;
+            padding: 10px;
+            font-size: 0.9em;
+            resize: vertical;
+            margin-bottom: 10px;
+        }
+        
+        .example-section {
+            background-color: #f0f7ff;
+            border: 1px solid #d0e1f9;
+            border-radius: 4px;
+            padding: 10px;
+            margin-top: 5px;
+            font-size: 0.9em;
+        }
+        
+        .example-section h4 {
+            color: #2a6ec8;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .example-content {
+            margin-top: 5px;
+            text-align: left;
+        }
+        
+        .example-content p {
+            text-align: left;
+        }
+        
+        .example-content ul {
+            text-align: left;
+            padding-left: 20px;
+        }
+        
+        .example-content li {
+            text-align: left;
+        }
+        
+        .use-example-btn {
+            background-color: #e9ecef;
+            color: #495057;
+            border: none;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8em;
+            cursor: pointer;
+            margin-left: auto;
+        }
+        
+        .use-example-btn:hover {
+            background-color: #dde2e6;
+        }
+        
+        .example-section h4:before {
+            content: '▶';
+            font-size: 0.7em;
+            margin-right: 5px;
+            transition: transform 0.2s;
+        }
+        
+        .example-section.expanded h4:before {
+            content: '▼';
+        }
+        
+        .example-section .example-content {
+            display: none;
+        }
+        
+        .example-section.expanded .example-content {
+            display: block;
+        }
+        
+        .row-2col .cell {
+            min-height: 150px;
+        }
+        
+        .row-2col-tall .cell {
+            min-height: 200px;
+        }
+        
+        /* Buttons */
+        .buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        
+        button {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            font-size: 1em;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+        
+        button.primary {
+            background-color: #2a6ec8;
+            color: white;
+        }
+        
+        button.primary:hover {
+            background-color: #215ca8;
+        }
+        
+        button.secondary {
+            background-color: #e9ecef;
+            color: #495057;
+        }
+        
+        button.secondary:hover {
+            background-color: #dde2e6;
+        }
+        
+        button.danger {
+            background-color: #dc3545;
+            color: white;
+        }
+        
+        button.danger:hover {
+            background-color: #bd2130;
+        }
+        
+        .template-selector {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            gap: 10px;
+        }
+        
+        .template-selector select {
+            padding: 10px;
+            border: 1px solid #d1d9e6;
+            border-radius: 4px;
+            font-size: 1em;
+            min-width: 300px;
+        }
+        
+        .template-selector button {
+            padding: 10px 15px;
+        }
+        
+        /* Notification */
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 20px;
+            background-color: #28a745;
+            color: white;
+            border-radius: 4px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            z-index: 1000;
+            opacity: 1;
+            transition: opacity 0.5s;
+        }
+        
+        /* Save status indicator */
+        .save-status {
+            position: fixed;
+            bottom: 10px;
+            left: 10px;
+            font-size: 0.8em;
+            color: #7a8599;
+        }
+        
+        /* Responsive adjustments */
+        @media (max-width: 768px) {
+            .title-section {
+                flex-direction: column;
+                gap: 10px;
+            }
+            
+            .row {
+                flex-direction: column;
+            }
+            
+            .cell {
+                margin-bottom: 15px;
+            }
+            
+            .buttons {
+                flex-direction: column;
+            }
+            
+            button {
+                width: 100%;
+            }
+        }
+        
+        /* Print styles */
+        @media print {
+            body {
+                background-color: white;
+                padding: 0;
+            }
+            
+            .canvas-container {
+                box-shadow: none;
+                padding: 0;
+            }
+            
+            .buttons, .example-section, .template-selector {
+                display: none;
+            }
+            
+            .save-status {
+                display: none;
+            }
+            
+            footer {
+                display: none;
+            }
+            
+            /* Ensure all content is included */
+            .cell {
+                break-inside: avoid;
+            }
+        }
+    </style>
 </head>
 <body>
-    <header>
-        <div class="header-content">
-            <div class="logo">
-                <h1>AI Project Canvas Builder</h1>
-                <p>Build structured implementation plans for AI projects</p>
-            </div>
-            <div class="actions">
-                <select id="templateSelect">
-                    <option value="">Choose a Template...</option>
-                    <option value="retail">RetailAssist: Customer Service AI</option>
-                    <option value="finance">FinSummarize: Financial Document AI</option>
-                    <option value="manufacturing">VisionFix: Defect Detection AI</option>
-                    <option value="blank">Blank Canvas</option>
-                </select>
-                <button id="saveBtn" class="btn">Save Draft</button>
-                <button id="loadBtn" class="btn">Load Draft</button>
-                <button id="exportBtn" class="btn primary">Export PDF</button>
+    <div class="canvas-container">
+        <div class="header">
+            <h1>AI Project Canvas</h1>
+            <p>A structured approach to planning AI implementation projects</p>
+        </div>
+        
+        <div class="template-selector">
+            <select id="template-select">
+                <option value="">Select a template to get started...</option>
+                <option value="retail">RetailAssist: Agentic AI for Customer Service</option>
+                <option value="finance">FinSummarize: GenAI for Financial Analysis</option>
+                <option value="manufacturing">VisionFix: Multimodal AI for Defect Detection</option>
+                <option value="blank">Blank Canvas</option>
+            </select>
+            <button id="apply-template" class="secondary">Apply Template</button>
+        </div>
+        
+        <div class="title-section">
+            <div class="label">Project Title:</div>
+            <div class="input">
+                <input type="text" id="project-title" placeholder="Enter a descriptive title for your AI project">
             </div>
         </div>
-    </header>
-    
-    <main>
-        <div class="container">
-            <section class="input-section">
-                <div class="tabs">
-                    <button class="tab active" data-section="project">Project</button>
-                    <button class="tab" data-section="data">Data</button>
-                    <button class="tab" data-section="skills">Skills</button>
-                    <button class="tab" data-section="value">Value</button>
-                    <button class="tab" data-section="integration">Integration</button>
-                    <button class="tab" data-section="customers">Customers</button>
-                    <button class="tab" data-section="output">Output</button>
-                    <button class="tab" data-section="stakeholders">Stakeholders</button>
-                    <button class="tab" data-section="cost">Cost</button>
-                    <button class="tab" data-section="revenue">Revenue</button>
+        
+        <!-- Row 1: Data, Skills, Value, Integration, Customers -->
+        <div class="row">
+            <div class="cell">
+                <div class="cell-header">
+                    <h2 class="cell-title">Data</h2>
+                    <div class="icon">≡</div>
                 </div>
-                
-                <div class="tab-content">
-                    <!-- Project title section -->
-                    <div class="tab-pane active" id="project-section">
-                        <h2>Project Title</h2>
-                        <p class="help-text">Enter a descriptive title for your AI project.</p>
-                        <input type="text" id="project-title" placeholder="e.g., RetailAssist: Agentic AI for Customer Service">
-                        <div class="example-box">
-                            <h4>Example</h4>
-                            <p>"VisionFix: Multimodal AI for Defect Detection at PrecisionTech"</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Data section -->
-                    <div class="tab-pane" id="data-section">
-                        <h2>Data</h2>
-                        <p class="help-text">What data will your AI project require? List all relevant data sources.</p>
-                        <textarea id="data-content" rows="15" placeholder="• Customer data
-• Transaction records
-• Product information
-etc."></textarea>
-                        <div class="example-box">
-                            <h4>Example from RetailAssist</h4>
-                            <p>• Customer interaction transcripts (chat, email, phone)
-• Order history and details from e-commerce platform
-• Inventory and product information (12,000+ SKUs)
-• Shipping and delivery tracking data</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Skills section -->
-                    <div class="tab-pane" id="skills-section">
-                        <h2>Skills</h2>
-                        <p class="help-text">What skills are needed to develop and implement this AI project?</p>
-                        <textarea id="skills-content" rows="15" placeholder="• Technical skills (ML, data engineering, etc.)
-• Domain expertise
-• Project management skills
-etc."></textarea>
-                        <div class="example-box">
-                            <h4>Example</h4>
-                            <p>• Technical Skills: Natural language processing, agentic AI development, systems integration
-• Domain Skills: Customer service operations, retail policies
-• Project Skills: Change management, governance framework design</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Value section -->
-                    <div class="tab-pane" id="value-section">
-                        <h2>Value Proposition</h2>
-                        <p class="help-text">What value will your AI project create? What problems will it solve?</p>
-                        <textarea id="value-content" rows="15" placeholder="• Primary value (key benefits)
-• Secondary benefits
-• Strategic advantages
-etc."></textarea>
-                        <div class="example-box">
-                            <h4>Example</h4>
-                            <p>• 24/7 consistent customer service availability
-• Reduced customer wait times by 85%
-• Handle 65% of inquiries without human intervention
-• Improve first-contact resolution from 58% to 80%+</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Integration section -->
-                    <div class="tab-pane" id="integration-section">
-                        <h2>Integration</h2>
-                        <p class="help-text">How will the AI system integrate with existing systems and processes?</p>
-                        <textarea id="integration-content" rows="15" placeholder="• Systems integration
-• Process integration
-• Data pipelines
-etc."></textarea>
-                        <div class="example-box">
-                            <h4>Example</h4>
-                            <p>• Connect to 12 operational systems including legacy platforms
-• Multiple customer interaction channels (chat, phone, email, social)
-• Customer authentication workflows
-• Escalation protocols to human agents</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Customers section -->
-                    <div class="tab-pane" id="customers-section">
-                        <h2>Customers</h2>
-                        <p class="help-text">Who are the end users and beneficiaries of your AI project?</p>
-                        <textarea id="customers-content" rows="15" placeholder="• Primary users
-• Secondary users
-• End beneficiaries
-etc."></textarea>
-                        <div class="example-box">
-                            <h4>Example</h4>
-                            <p>• Primary Customers: Retail customers (B2C), 1.2 million active customers
-• Internal Customers: 75 customer service representatives, contact center managers
-• Executive leadership team, store managers</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Output section -->
-                    <div class="tab-pane" id="output-section">
-                        <h2>Output</h2>
-                        <p class="help-text">What key metrics are you optimizing for? What defines success?</p>
-                        <textarea id="output-content" rows="15" placeholder="• Performance metrics
-• Quality metrics
-• Business impact metrics
-etc."></textarea>
-                        <div class="example-box">
-                            <h4>Example</h4>
-                            <p>• Customer satisfaction scores (target: 3.7 to 4.5+)
-• First-contact resolution rate (target: 80%+)
-• AI handle rate (target: 65% of all inquiries)
-• Cost per interaction (target: 40% reduction)</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Stakeholders section -->
-                    <div class="tab-pane" id="stakeholders-section">
-                        <h2>Stakeholders</h2>
-                        <p class="help-text">Who are the key stakeholders involved in or affected by this project?</p>
-                        <textarea id="stakeholders-content" rows="15" placeholder="• Project leaders
-• Key decision makers
-• Critical stakeholders
-etc."></textarea>
-                        <div class="example-box">
-                            <h4>Example</h4>
-                            <p>• Key Decision Makers: Chief Digital Officer, Customer Service Director, CIO/CTO
-• Critical Stakeholders: Customer service representatives, IT support teams, compliance team
-• Customer advisory panel</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Cost section -->
-                    <div class="tab-pane" id="cost-section">
-                        <h2>Cost</h2>
-                        <p class="help-text">What costs will the project incur during development and ongoing operations?</p>
-                        <textarea id="cost-content" rows="15" placeholder="• Development costs
-• Implementation costs
-• Ongoing costs
-etc."></textarea>
-                        <div class="example-box">
-                            <h4>Example</h4>
-                            <p>• Development Costs: AI system ($1.5M), systems integration ($750K)
-• Implementation Costs: Training ($300K), testing ($200K)
-• Ongoing Costs: Maintenance ($150K/year), monitoring ($200K/year)
-• Total Investment: $3.2M over 12 months</p>
-                        </div>
-                    </div>
-                    
-                    <!-- Revenue section -->
-                    <div class="tab-pane" id="revenue-section">
-                        <h2>Revenue/Savings</h2>
-                        <p class="help-text">How will the project generate revenue or cost savings?</p>
-                        <textarea id="revenue-content" rows="15" placeholder="• Direct cost savings
-• Operational improvements
-• New revenue opportunities
-• ROI analysis
-etc."></textarea>
-                        <div class="example-box">
-                            <h4>Example</h4>
-                            <p>• Direct Cost Savings: Reduced staffing costs ($1.8M annually)
-• Revenue Impact: Increased customer retention (1% = $2.2M)
-• ROI Analysis: 14-month investment recovery, 3-year ROI: 480%</p>
-                        </div>
+                <p class="prompt">Which data do you need?</p>
+                <textarea id="data-content" placeholder="List the data sources and types your AI project requires"></textarea>
+                <div class="example-section">
+                    <h4><span class="use-example-btn">Use Example</span></h4>
+                    <div class="example-content">
+                        <p>• Primary Data Sources:<br>
+                        - Customer interaction records<br>
+                        - Order history and transaction data<br>
+                        - Product information (specifications, pricing)<br>
+                        - User feedback and survey responses<br><br>
+                        
+                        • Technical Requirements:<br>
+                        - Data format specifications<br>
+                        - Volume considerations (expected size)<br>
+                        - Update frequency requirements<br>
+                        - Integration points with existing systems</p>
                     </div>
                 </div>
-            </section>
+            </div>
             
-            <section class="preview-section">
-                <div class="canvas-preview" id="canvasPreview">
-                    <!-- Canvas preview will be rendered here -->
+            <div class="cell">
+                <div class="cell-header">
+                    <h2 class="cell-title">Skills</h2>
+                    <div class="icon">🔑</div>
                 </div>
-            </section>
+                <p class="prompt">Which skills do you need for development?</p>
+                <textarea id="skills-content" placeholder="Identify the technical, domain, and project skills needed"></textarea>
+                <div class="example-section">
+                    <h4><span class="use-example-btn">Use Example</span></h4>
+                    <div class="example-content">
+                        <p>• Technical Skills:<br>
+                        - Machine learning/AI expertise<br>
+                        - Data engineering and preprocessing<br>
+                        - Backend/frontend development<br>
+                        - DevOps and deployment<br><br>
+                        
+                        • Domain Skills:<br>
+                        - Industry-specific knowledge<br>
+                        - Business process understanding<br>
+                        - Regulatory compliance expertise<br><br>
+                        
+                        • Project Skills:<br>
+                        - AI project management<br>
+                        - Change management<br>
+                        - Stakeholder communication</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cell">
+                <div class="cell-header">
+                    <h2 class="cell-title">Value Proposition</h2>
+                    <div class="icon">🏆</div>
+                </div>
+                <p class="prompt">What is the value added by your project?</p>
+                <textarea id="value-content" placeholder="Describe the primary benefits and improvements the AI project will deliver"></textarea>
+                <div class="example-section">
+                    <h4><span class="use-example-btn">Use Example</span></h4>
+                    <div class="example-content">
+                        <div style="text-align: left;">
+                            • Efficiency Improvements:<br>
+                            &nbsp;&nbsp;- Process automation (reduce manual work by X%)<br>
+                            &nbsp;&nbsp;- Time savings (reduce processing time by X)<br>
+                            &nbsp;&nbsp;- Error reduction (lower error rates by X%)<br><br>
+                            
+                            • Financial Benefits:<br>
+                            &nbsp;&nbsp;- Cost reduction (estimated $X savings)<br>
+                            &nbsp;&nbsp;- Revenue increase (potential $X growth)<br>
+                            &nbsp;&nbsp;- Resource optimization<br><br>
+                            
+                            • Strategic Advantages:<br>
+                            &nbsp;&nbsp;- Enhanced customer experience<br>
+                            &nbsp;&nbsp;- Competitive differentiation<br>
+                            &nbsp;&nbsp;- Scalability improvements
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cell">
+                <div class="cell-header">
+                    <h2 class="cell-title">Integration</h2>
+                    <div class="icon">⊕</div>
+                </div>
+                <p class="prompt">How will the project be integrated?</p>
+                <textarea id="integration-content" placeholder="Define how the AI solution will integrate with existing systems and processes"></textarea>
+                <div class="example-section">
+                    <h4><span class="use-example-btn">Use Example</span></h4>
+                    <div class="example-content">
+                        <div style="text-align: left;">
+                            • Systems Integration:<br>
+                            &nbsp;&nbsp;- CRM/ERP connection points<br>
+                            &nbsp;&nbsp;- API requirements<br>
+                            &nbsp;&nbsp;- Database interactions<br>
+                            &nbsp;&nbsp;- Authentication systems<br><br>
+                            
+                            • Process Integration:<br>
+                            &nbsp;&nbsp;- Workflow adjustments<br>
+                            &nbsp;&nbsp;- Business process changes<br>
+                            &nbsp;&nbsp;- Decision points for AI vs. human<br><br>
+                            
+                            • Technical Requirements:<br>
+                            &nbsp;&nbsp;- Data exchange formats<br>
+                            &nbsp;&nbsp;- Real-time vs. batch processing<br>
+                            &nbsp;&nbsp;- Monitoring and logging
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cell">
+                <div class="cell-header">
+                    <h2 class="cell-title">Customers</h2>
+                    <div class="icon">👤</div>
+                </div>
+                <p class="prompt">Who are the end customers?</p>
+                <textarea id="customers-content" placeholder="Identify who will use or benefit from the AI solution"></textarea>
+                <div class="example-section">
+                    <h4><span class="use-example-btn">Use Example</span></h4>
+                    <div class="example-content">
+                        <div style="text-align: left;">
+                            • Primary Users:<br>
+                            &nbsp;&nbsp;- Direct users of the AI system<br>
+                            &nbsp;&nbsp;- User demographics and characteristics<br>
+                            &nbsp;&nbsp;- Technical proficiency levels<br><br>
+                            
+                            • Secondary Users:<br>
+                            &nbsp;&nbsp;- Indirect users benefiting from output<br>
+                            &nbsp;&nbsp;- Management and oversight roles<br><br>
+                            
+                            • External Stakeholders:<br>
+                            &nbsp;&nbsp;- Customers/clients<br>
+                            &nbsp;&nbsp;- Partners and suppliers<br>
+                            &nbsp;&nbsp;- Regulatory bodies (if applicable)
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
-    </main>
+        
+        <!-- Row 2: Output, Stakeholders -->
+        <div class="row row-2col">
+            <div class="cell">
+                <div class="cell-header">
+                    <h2 class="cell-title">Output</h2>
+                    <div class="icon">🎯</div>
+                </div>
+                <p class="prompt">Which key metrics are you optimizing for?</p>
+                <textarea id="output-content" placeholder="Define the success metrics and targets for your AI project"></textarea>
+                <div class="example-section">
+                    <h4><span class="use-example-btn">Use Example</span></h4>
+                    <div class="example-content">
+                        <p>• Performance Metrics:<br>
+                        - Accuracy/precision (target: X%)<br>
+                        - Speed/response time (target: X seconds)<br>
+                        - Throughput capacity (X transactions/hour)<br><br>
+                        
+                        • Business Metrics:<br>
+                        - Productivity improvements (target: X%)<br>
+                        - Cost reduction (target: $X)<br>
+                        - Customer satisfaction (target: X point increase)<br><br>
+                        
+                        • Technical Metrics:<br>
+                        - System reliability/uptime (target: X%)<br>
+                        - Scalability measurements<br>
+                        - Quality assurance metrics</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cell">
+                <div class="cell-header">
+                    <h2 class="cell-title">Stakeholders</h2>
+                    <div class="icon">👥</div>
+                </div>
+                <p class="prompt">Who are the key stakeholders?</p>
+                <textarea id="stakeholders-content" placeholder="List the key people and groups involved in or affected by the project"></textarea>
+                <div class="example-section">
+                    <h4><span class="use-example-btn">Use Example</span></h4>
+                    <div class="example-content">
+                        <p>• Project Leaders:<br>
+                        - Project sponsor/champion<br>
+                        - Project manager<br>
+                        - Technical lead<br><br>
+                        
+                        • Key Influencers:<br>
+                        - Department heads<br>
+                        - Subject matter experts<br>
+                        - IT and security teams<br><br>
+                        
+                        • Affected Groups:<br>
+                        - End users whose work will change<br>
+                        - Cross-functional team members<br>
+                        - External partners or customers</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Row 3: Cost, Revenue -->
+        <div class="row row-2col-tall">
+            <div class="cell">
+                <div class="cell-header">
+                    <h2 class="cell-title">Cost</h2>
+                    <div class="icon">💰</div>
+                </div>
+                <p class="prompt">What costs will the project incur?</p>
+                <textarea id="cost-content" placeholder="Outline development, implementation, and ongoing costs"></textarea>
+                <div class="example-section">
+                    <h4><span class="use-example-btn">Use Example</span></h4>
+                    <div class="example-content">
+                        <p>• Development Costs:<br>
+                        - AI/ML model development: $XXX,XXX<br>
+                        - Software engineering: $XXX,XXX<br>
+                        - Data acquisition/preparation: $XX,XXX<br>
+                        - Testing and validation: $XX,XXX<br><br>
+                        
+                        • Implementation Costs:<br>
+                        - Integration: $XX,XXX<br>
+                        - Training: $XX,XXX<br>
+                        - Change management: $XX,XXX<br><br>
+                        
+                        • Ongoing Costs:<br>
+                        - Maintenance and updates: $XX,XXX/year<br>
+                        - Infrastructure/hosting: $XX,XXX/year<br>
+                        - Support and operations: $XX,XXX/year<br><br>
+                        
+                        • Total Investment: $XXX,XXX over X months</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="cell">
+                <div class="cell-header">
+                    <h2 class="cell-title">Revenue/Savings</h2>
+                    <div class="icon">📈</div>
+                </div>
+                <p class="prompt">How will the project generate revenue or savings?</p>
+                <textarea id="revenue-content" placeholder="Quantify expected financial benefits and ROI"></textarea>
+                <div class="example-section">
+                    <h4><span class="use-example-btn">Use Example</span></h4>
+                    <div class="example-content">
+                        <p>• Direct Savings:<br>
+                        - Labor cost reduction: $XXX,XXX/year<br>
+                        - Error/waste reduction: $XX,XXX/year<br>
+                        - Process efficiency gains: $XXX,XXX/year<br><br>
+                        
+                        • Revenue Opportunities:<br>
+                        - New product/service capabilities: $XXX,XXX<br>
+                        - Improved customer retention: $XX,XXX<br>
+                        - Market expansion potential: $XXX,XXX<br><br>
+                        
+                        • ROI Analysis:<br>
+                        - Payback period: XX months<br>
+                        - 3-year ROI: XXX%<br>
+                        - Annual return rate: XX%</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="buttons">
+            <button id="saveBtn" class="primary">Save Draft</button>
+            <button id="loadBtn" class="secondary">Load Draft</button>
+            <button id="printBtn" class="secondary">Print/Save PDF</button>
+            <button id="resetBtn" class="danger">Reset Canvas</button>
+        </div>
+        
+                        <div id="save-status" class="save-status"></div>
+    </div>
     
-    <footer>
-        <p>&copy; 2025 AI Project Canvas | <a href="https://github.com/yourusername/ai-project-canvas" target="_blank">View on GitHub</a></p>
+    <footer style="text-align: center; margin-top: 40px; padding: 20px; border-top: 1px solid #d1d9e6;">
+        <p style="color: #7a8599; font-size: 0.9em;">
+            © 2025 Himanshu Joshi | 
+            <a href="https://github.com/HimJoe" target="_blank" style="color: #2a6ec8; text-decoration: none; margin-left: 5px;">
+                GitHub Profile
+            </a>
+        </p>
     </footer>
     
-    <script src="js/app.js"></script>
-    <script src="js/canvas.js"></script>
-    <script src="js/export.js"></script>
-    <script src="js/storage.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // DOM elements
+            const projectTitle = document.getElementById('project-title');
+            const dataContent = document.getElementById('data-content');
+            const skillsContent = document.getElementById('skills-content');
+            const valueContent = document.getElementById('value-content');
+            const integrationContent = document.getElementById('integration-content');
+            const customersContent = document.getElementById('customers-content');
+            const outputContent = document.getElementById('output-content');
+            const stakeholdersContent = document.getElementById('stakeholders-content');
+            const costContent = document.getElementById('cost-content');
+            const revenueContent = document.getElementById('revenue-content');
+            
+            const saveBtn = document.getElementById('saveBtn');
+            const loadBtn = document.getElementById('loadBtn');
+            const printBtn = document.getElementById('printBtn');
+            const resetBtn = document.getElementById('resetBtn');
+            const saveStatus = document.getElementById('save-status');
+            
+            const templateSelect = document.getElementById('template-select');
+            const applyTemplateBtn = document.getElementById('apply-template');
+            
+            // Example sections
+            const exampleSections = document.querySelectorAll('.example-section');
+            
+            // Initialize examples as expandable
+            exampleSections.forEach(section => {
+                const header = section.querySelector('h4');
+                const useButton = header.querySelector('.use-example-btn');
+                const content = section.querySelector('.example-content');
+                
+                // Toggle example visibility
+                header.addEventListener('click', function(e) {
+                    if (e.target !== useButton) {
+                        section.classList.toggle('expanded');
+                    }
+                });
+                
+                // Use example button
+                if (useButton) {
+                    useButton.addEventListener('click', function(e) {
+                        e.stopPropagation();
+                        const textarea = section.previousElementSibling;
+                        if (textarea && content) {
+                            textarea.value = content.innerText;
+                            textarea.style.height = 'auto';
+                            textarea.style.height = (textarea.scrollHeight) + 'px';
+                            saveDraft();
+                        }
+                    });
+                }
+            });
+            
+            // Define storage key
+            const STORAGE_KEY = 'aiProjectCanvasData';
+            
+            // Autosave functionality
+            let autoSaveTimer;
+            const AUTO_SAVE_DELAY = 2000; // 2 seconds
+            
+            // Collection of all form fields
+            const formFields = [
+                { element: projectTitle, key: 'projectTitle' },
+                { element: dataContent, key: 'dataContent' },
+                { element: skillsContent, key: 'skillsContent' },
+                { element: valueContent, key: 'valueContent' },
+                { element: integrationContent, key: 'integrationContent' },
+                { element: customersContent, key: 'customersContent' },
+                { element: outputContent, key: 'outputContent' },
+                { element: stakeholdersContent, key: 'stakeholdersContent' },
+                { element: costContent, key: 'costContent' },
+                { element: revenueContent, key: 'revenueContent' }
+            ];
+            
+            // Add input listeners to all fields for autosave
+            formFields.forEach(field => {
+                if(field.element) {
+                    field.element.addEventListener('input', () => {
+                        updateSaveStatus('Saving...');
+                        clearTimeout(autoSaveTimer);
+                        autoSaveTimer = setTimeout(() => {
+                            saveDraft();
+                        }, AUTO_SAVE_DELAY);
+                    });
+                }
+            });
+            
+            // Test localStorage availability
+            function isLocalStorageAvailable() {
+                try {
+                    const testKey = 'test';
+                    localStorage.setItem(testKey, testKey);
+                    localStorage.removeItem(testKey);
+                    return true;
+                } catch (e) {
+                    return false;
+                }
+            }
+            
+            // Update save status
+            function updateSaveStatus(message) {
+                if(saveStatus) {
+                    saveStatus.textContent = message;
+                }
+            }
+            
+            // Function to save the canvas data
+            function saveDraft() {
+                if (!isLocalStorageAvailable()) {
+                    showNotification('Cannot save: Local storage is not available in your browser.', 'error');
+                    updateSaveStatus('Cannot save.');
+                    return;
+                }
+                
+                try {
+                    const canvasData = {};
+                    
+                    formFields.forEach(field => {
+                        if(field.element) {
+                            canvasData[field.key] = field.element.value;
+                        }
+                    });
+                    
+                    const dataString = JSON.stringify(canvasData);
+                    localStorage.setItem(STORAGE_KEY, dataString);
+                    
+                    updateSaveStatus('Last saved: ' + new Date().toLocaleTimeString());
+                    showNotification('Draft saved successfully!');
+                    console.log('Canvas data saved');
+                } catch (error) {
+                    console.error('Error saving draft:', error);
+                    updateSaveStatus('Save failed.');
+                    showNotification('Error saving draft. Please try again.', 'error');
+                }
+            }
+            
+            // Function to load canvas data
+            function loadDraft() {
+                if (!isLocalStorageAvailable()) {
+                    showNotification('Cannot load: Local storage is not available in your browser.', 'error');
+                    return;
+                }
+                
+                try {
+                    const savedData = localStorage.getItem(STORAGE_KEY);
+                    
+                    if (savedData) {
+                        const canvasData = JSON.parse(savedData);
+                        
+                        formFields.forEach(field => {
+                            if(field.element && canvasData[field.key] !== undefined) {
+                                field.element.value = canvasData[field.key];
+                                
+                                // Adjust height for textareas
+                                if (field.element.tagName.toLowerCase() === 'textarea') {
+                                    field.element.style.height = 'auto';
+                                    field.element.style.height = (field.element.scrollHeight) + 'px';
+                                }
+                            }
+                        });
+                        
+                        updateSaveStatus('Loaded from storage.');
+                        showNotification('Draft loaded successfully!');
+                    } else {
+                        showNotification('No saved draft found.', 'warning');
+                    }
+                } catch (error) {
+                    console.error('Error loading draft:', error);
+                    showNotification('Error loading draft. The saved data may be corrupted.', 'error');
+                }
+            }
+            
+            // Function to reset the canvas
+            function resetCanvas() {
+                if (confirm('Are you sure you want to reset the canvas? All your data will be cleared.')) {
+                    formFields.forEach(field => {
+                        if(field.element) {
+                            field.element.value = '';
+                            
+                            // Reset height for textareas
+                            if (field.element.tagName.toLowerCase() === 'textarea') {
+                                field.element.style.height = '';
+                            }
+                        }
+                    });
+                    
+                    if (isLocalStorageAvailable()) {
+                        localStorage.removeItem(STORAGE_KEY);
+                    }
+                    
+                    updateSaveStatus('Canvas reset.');
+                    showNotification('Canvas has been reset.');
+                }
+            }
+            
+            // Function to load template data
+            function loadTemplate(templateName) {
+                // Define templates
+                const templates = {
+                    retail: {
+                        projectTitle: "RetailAssist: Agentic AI for Customer Service at NorthStar Retail",
+                        dataContent: "• Customer interaction transcripts (chat, email, phone)\n• Order history and details from e-commerce platform\n• Inventory and product information (12,000+ SKUs)\n• Shipping and delivery tracking data\n• Return and exchange policies (structured and unstructured)\n• Warranty information for 5,000+ products\n• Past complaint resolutions (3 years of data)\n• Authentication protocols and verification criteria\n• Decision boundary parameters for autonomous actions",
+                        skillsContent: "• Technical Skills:\n  - Natural language processing expertise\n  - Agentic AI development (planning, reasoning)\n  - Systems integration (12 disparate systems)\n  - Security and data privacy implementation\n  - Conversational design and intent recognition\n\n• Domain Skills:\n  - Customer service operations knowledge\n  - Retail policies and procedures expertise\n  - Order management and fulfillment understanding\n\n• Project Skills:\n  - Change management expertise\n  - Training development for customer service\n  - Governance framework design",
+                        valueContent: "• Primary Value:\n  - 24/7 consistent customer service availability\n  - Reduced customer wait times by 85%\n  - Handle 65% of inquiries without human intervention\n  - Improve first-contact resolution from 58% to 80%+\n  - Reduce operational costs by $2.8M annually\n\n• Secondary Benefits:\n  - Improve CSAT scores from 3.7 to 4.5+\n  - More consistent application of policies\n  - Better data collection on customer issues\n  - Free human agents for complex, high-touch issues\n  - Reduce staff turnover by elevating CSR roles",
+                        integrationContent: "• Systems Integration:\n  - Connect to 12 operational systems including legacy platforms\n  - Multiple customer interaction channels (chat, phone, email, social)\n  - Knowledge management systems\n  - CRM and order management systems\n  - Inventory and logistics systems\n\n• Process Integration:\n  - Customer authentication workflows\n  - Escalation protocols to human agents\n  - Return/refund authorization processes\n  - Delivery scheduling systems\n  - Human-in-the-loop feedback mechanisms",
+                        customersContent: "• Primary Customers:\n  - NorthStar Retail customers (B2C)\n  - Approximately 1.2 million active customers\n  - 85 retail locations across the country\n  - Growing e-commerce customer base (35% of revenue)\n\n• Internal Customers:\n  - 75 customer service representatives\n  - Contact center managers (3 locations)\n  - Operations management team\n  - Executive leadership team\n  - Store managers and staff (for service escalations)",
+                        outputContent: "• Customer Experience Metrics:\n  - Customer satisfaction scores (target: 3.7 to 4.5+)\n  - First-contact resolution rate (target: 80%+)\n  - Average response time (target: <30 seconds)\n  - Customer effort score (target: 25% reduction)\n\n• Operational Metrics:\n  - AI handle rate (target: 65% of all inquiries)\n  - Average handle time (target: 50% reduction)\n  - Cost per interaction (target: 40% reduction)\n  - Issue escalation rate (target: <35% of interactions)\n  - 24/7 availability (target: 99.9% uptime)",
+                        stakeholdersContent: "• Key Decision Makers:\n  - Maya Rodriguez (Chief Digital Officer)\n  - Customer Service Director\n  - CIO/CTO\n  - CFO (for budget approval)\n  - CEO and executive committee\n\n• Critical Stakeholders:\n  - Customer service representatives (75 staff)\n  - Contact center managers (3 locations)\n  - IT support and maintenance teams\n  - Customer experience team\n  - Legal and compliance team (for decision boundaries)\n  - Customer advisory panel (for feedback)",
+                        costContent: "• Development Costs:\n  - AI system development and licensing: $1.5M\n  - Systems integration (12 platforms): $750K\n  - Infrastructure and security implementation: $500K\n  - User interface development: $200K\n\n• Implementation Costs:\n  - Training and change management: $300K\n  - Data preparation and migration: $150K\n  - Testing and quality assurance: $200K\n  - Project management and governance: $250K\n\n• Ongoing Costs:\n  - Maintenance and updates: $150K/year\n  - Monitoring and human oversight: $200K/year\n  - Continuous learning and improvement: $100K/year\n  - Infrastructure and hosting: $150K/year\n\n• Total Investment: $3.2M over 12 months\n• Annual Operating Cost: $600K after implementation",
+                        revenueContent: "• Direct Cost Savings:\n  - Reduced staffing costs: $1.8M annually\n  - Lower training costs due to reduced turnover: $400K annually\n  - Reduced telecommunications expenses: $300K annually\n  - Lower recruitment costs: $300K annually\n  - Total operational savings: $2.8M annually\n\n• Revenue Impact:\n  - Increased customer retention (1% improvement = $2.2M)\n  - Higher conversion rates from better service (est. $1.5M)\n  - Increased average order value ($800K annually)\n  - Additional sales from 24/7 availability ($1.2M)\n  - Total revenue impact: $4-6M annually\n\n• ROI Analysis:\n  - Investment recovery period: 14 months\n  - 3-year ROI: 480%\n  - Annual rate of return: 87%"
+                    },
+                    finance: {
+                        projectTitle: "FinSummarize: GenAI Summarization Tool for Meridian Financial Services",
+                        dataContent: "• Primary Financial Documents:\n  - Quarterly and annual reports (10-Qs, 10-Ks)\n  - Earnings call transcripts\n  - Industry analyst reports\n  - Financial news and press releases\n  - Regulatory filings and disclosures\n  - Economic indicators and market data\n\n• Reference Data:\n  - Financial terminology glossaries\n  - Accounting principles and standards\n  - Industry-specific metrics and benchmarks\n  - Historical analyst summaries (3+ years)\n  - Company-specific templates and formats",
+                        skillsContent: "• Technical Skills:\n  - Financial-specific LLM development\n  - Document understanding and extraction\n  - Table and chart data extraction\n  - Domain-specific fine-tuning expertise\n  - Security and compliance implementation\n\n• Domain Skills:\n  - Financial analysis expertise\n  - Accounting knowledge\n  - Regulatory compliance understanding\n  - Industry-specific knowledge (multiple sectors)\n  - Investment process expertise\n\n• Project Skills:\n  - Financial accuracy validation methodologies\n  - Change management for expert users\n  - Information security governance\n  - Quality assurance for financial summaries",
+                        valueContent: "• Efficiency Gains:\n  - 70% reduction in document review time\n  - Enable analysts to cover 40% more companies\n  - Reduce time to generate initial analysis by 65%\n  - Standardize information extraction across analysts\n\n• Quality Improvements:\n  - Maintain 95%+ information accuracy\n  - Catch critical information that might be missed\n  - Consistent depth of analysis across sectors\n  - Improved identification of subtle financial signals\n\n• Strategic Benefits:\n  - Enable analysts to focus on high-value interpretation\n  - Reduce missed investment opportunities\n  - Better traceability from insights to source data\n  - Improved pattern recognition across companies",
+                        integrationContent: "• Systems Integration:\n  - Document management systems\n  - Analyst workflow platforms\n  - Investment recommendation systems\n  - Compliance documentation systems\n  - Research publishing platforms\n  - CRM for client investment communications\n\n• Process Integration:\n  - Document ingestion workflow\n  - Analyst review and verification process\n  - Investment committee presentation protocols\n  - Compliance verification workflows\n  - Knowledge sharing between analysts\n  - Client reporting systems",
+                        customersContent: "• Primary Users:\n  - Investment analysts (35 professionals)\n  - Research department leadership\n  - Portfolio managers\n\n• Secondary Users:\n  - Investment committee members\n  - Compliance officers\n  - Executive leadership\n  - Client relationship managers\n\n• End Beneficiaries:\n  - High-net-worth clients\n  - Institutional investors\n  - Meridian's portfolio performance",
+                        outputContent: "• Accuracy Metrics:\n  - Information accuracy (target: 95%+)\n  - Critical information identification (target: 98%)\n  - Financial data precision (target: 99.9%)\n  - Risk flag identification (target: 95%+)\n\n• Efficiency Metrics:\n  - Document review time (target: 70% reduction)\n  - Analysis throughput (target: 40% increase)\n  - Companies covered per analyst (target: 40% increase)\n  - Time to investment recommendation (target: 50% reduction)",
+                        stakeholdersContent: "• Project Leaders:\n  - Alex Wei (VP of Technology)\n  - Sophia Chen (Investment Analysis Department Head)\n  - Chief Investment Officer\n  - Chief Compliance Officer\n\n• Critical Stakeholders:\n  - Senior investment analysts (most skeptical)\n  - Junior analysts (most enthusiastic)\n  - IT security team\n  - Legal and compliance team\n  - Investment committee members\n  - Board of directors (final approvers)",
+                        costContent: "• Development Costs:\n  - AI model development and financial fine-tuning: $800K\n  - Systems integration: $400K\n  - Security and compliance controls: $200K\n  - User interface development: $150K\n\n• Implementation Costs:\n  - Training development: $75K\n  - Financial validation process: $100K\n  - Change management: $75K\n  - Documentation and compliance evidence: $50K\n\n• Ongoing Costs:\n  - Model refinement and maintenance: $100K/year\n  - Monitoring and validation: $150K/year\n  - Expanded data sources: $75K/year\n  - Technical support: $50K/year",
+                        revenueContent: "• Direct Productivity Gains:\n  - Analyst efficiency increase (40%): $3.1M annually\n  - Calculated based on: 35 analysts x $220K avg. salary x 40% efficiency gain\n  - Broader company coverage without staffing increase\n  - Faster response to market events and reporting\n\n• Investment Performance Impact:\n  - Reduction in missed opportunities: $15-20M in portfolio value\n  - Improved risk identification: $10-15M in avoided losses\n  - More consistent analysis quality: $10M in performance gains\n  - Total portfolio impact: $35-45M annually"
+                    },
+                    manufacturing: {
+                        projectTitle: "VisionFix: Multimodal AI for Defect Detection at PrecisionTech",
+                        dataContent: "• Visual Data:\n  - High-resolution component images (multiple angles)\n  - Labeled defect examples (thousands per category)\n  - Non-defective reference images\n  - Environmental condition variations\n  - Production lighting scenarios\n\n• Engineering Data:\n  - CAD files and engineering drawings\n  - Material specifications\n  - Tolerance measurements\n  - Specification documents\n  - Manufacturing process parameters\n\n• Historical Data:\n  - Previous defect instances with classifications\n  - Customer rejection documentation\n  - Quality assurance inspection records\n  - Warranty claim root cause analyses",
+                        skillsContent: "• Technical Skills:\n  - Computer vision expertise\n  - Document analysis capabilities\n  - Multimodal model development\n  - Machine learning for defect classification\n  - Hardware integration for imaging systems\n  - Edge computing implementation\n\n• Domain Skills:\n  - Manufacturing process knowledge\n  - Quality assurance methodologies\n  - Engineering drawing interpretation\n  - Industry-specific regulatory requirements\n  - Materials science understanding\n  - Defect classification expertise",
+                        valueContent: "• Quality Improvements:\n  - Increase defect detection from 92% to 98.5%\n  - Detect subtle defects invisible to human inspectors\n  - Reduce rejected shipments by 75%\n  - Decrease customer warranty claims by 40%\n  - Maintain certification for critical industries\n\n• Operational Efficiency:\n  - Process components 5x faster than manual inspection\n  - Increase QA throughput capacity by 60%\n  - Reduce documentation time by 85%\n  - Standardize inspection process across facilities\n  - Scale production without proportional QA staffing",
+                        integrationContent: "• Hardware Integration:\n  - High-resolution imaging stations (multiple angles)\n  - Production line inspection points\n  - Edge computing devices for real-time processing\n  - Lighting and environmental controls\n  - Visual feedback systems for operators\n\n• Software Integration:\n  - Manufacturing execution systems (MES)\n  - Quality management systems (QMS)\n  - Engineering document management\n  - Production planning and scheduling\n  - Enterprise resource planning (ERP)",
+                        customersContent: "• Primary Internal Users:\n  - Quality assurance team (30+ specialists)\n  - Production line operators\n  - Manufacturing engineers\n  - Quality control managers\n\n• Secondary Internal Users:\n  - Executive leadership\n  - Sales and business development\n  - Regulatory compliance team\n  - Process improvement specialists\n\n• External Beneficiaries:\n  - OEM clients in aerospace, medical, automotive\n  - Regulatory auditors\n  - End-users of manufactured components",
+                        outputContent: "• Quality Metrics:\n  - Defect detection rate (target: 98.5%+)\n  - False positive rate (target: <1%)\n  - Defect classification accuracy (target: 95%+)\n  - Subtle defect identification (target: 90%+)\n\n• Operational Metrics:\n  - Inspection speed (target: 5x current rate)\n  - QA throughput capacity (target: 60% increase)\n  - Documentation time (target: 85% reduction)\n  - Production flow enhancement (target: 20% improvement)",
+                        stakeholdersContent: "• Project Leaders:\n  - Raj Patel (Director of Quality Assurance)\n  - VP of Manufacturing Operations\n  - Chief Technology Officer\n  - Director of Regulatory Compliance\n\n• Critical Stakeholders:\n  - Quality assurance specialists (most affected)\n  - Production line managers\n  - Key client representatives (aerospace, medical)\n  - IT and systems integration team\n  - Regulatory bodies and certification agencies\n  - Executive leadership team",
+                        costContent: "• Development Costs:\n  - AI model development: $800K\n  - Hardware (cameras, processing systems): $600K\n  - Systems integration: $500K\n  - Validation and testing: $300K\n\n• Implementation Costs:\n  - Production line modifications: $250K\n  - Training and change management: $200K\n  - Regulatory documentation: $150K\n  - Data collection and labeling: $100K\n\n• Ongoing Costs:\n  - Hardware maintenance and calibration: $80K/year\n  - Model updates and refinement: $70K/year\n  - Technical support: $50K/year\n  - Regulatory compliance maintenance: $50K/year",
+                        revenueContent: "• Direct Cost Savings:\n  - Reduced rejected shipments: $2.7M annually\n  - Decreased rework and replacement costs: $1.5M\n  - Eliminated penalties and expediting fees: $1.2M\n\n• Operational Improvements:\n  - Increased QA throughput capacity: $1.2M value\n  - Enhanced production capacity utilization: $750K\n  - Documentation efficiency gains: $450K\n\n• Risk Reduction:\n  - Reduced warranty claims: $850K annually\n  - Decreased liability exposure: $650K risk value\n  - Protected key contracts through quality assurance: $1.2M"
+                    },
+                    blank: {
+                        projectTitle: "",
+                        dataContent: "",
+                        skillsContent: "",
+                        valueContent: "",
+                        integrationContent: "",
+                        customersContent: "",
+                        outputContent: "",
+                        stakeholdersContent: "",
+                        costContent: "",
+                        revenueContent: ""
+                    }
+                };
+                
+                // Check if template exists
+                if (templates[templateName]) {
+                    // Apply template data
+                    const template = templates[templateName];
+                    
+                    formFields.forEach(field => {
+                        if(field.element && template[field.key]) {
+                            field.element.value = template[field.key];
+                            
+                            // Adjust height for textareas
+                            if (field.element.tagName.toLowerCase() === 'textarea') {
+                                field.element.style.height = 'auto';
+                                field.element.style.height = (field.element.scrollHeight) + 'px';
+                            }
+                        }
+                    });
+                    
+                    saveDraft();
+                    showNotification(`${templateName.charAt(0).toUpperCase() + templateName.slice(1)} template applied successfully!`);
+                }
+            }
+            
+            // Function to show notifications
+            function showNotification(message, type = 'success') {
+                // Remove any existing notification
+                const existingNotification = document.querySelector('.notification');
+                if (existingNotification) {
+                    document.body.removeChild(existingNotification);
+                }
+                
+                // Create notification element
+                const notification = document.createElement('div');
+                notification.className = 'notification';
+                notification.textContent = message;
+                
+                // Style based on type
+                if (type === 'error') {
+                    notification.style.backgroundColor = '#dc3545';
+                } else if (type === 'warning') {
+                    notification.style.backgroundColor = '#ffc107';
+                    notification.style.color = '#212529';
+                } else {
+                    notification.style.backgroundColor = '#28a745';
+                }
+                
+                // Add to document
+                document.body.appendChild(notification);
+                
+                // Remove after 3 seconds
+                setTimeout(() => {
+                    notification.style.opacity = '0';
+                    
+                    // Remove from DOM after fade out
+                    setTimeout(() => {
+                        if (document.body.contains(notification)) {
+                            document.body.removeChild(notification);
+                        }
+                    }, 500);
+                }, 3000);
+            }
+            
+            // Apply template button handler
+            if (applyTemplateBtn) {
+                applyTemplateBtn.addEventListener('click', () => {
+                    const selectedTemplate = templateSelect.value;
+                    if (selectedTemplate) {
+                        loadTemplate(selectedTemplate);
+                    } else {
+                        showNotification('Please select a template first.', 'warning');
+                    }
+                });
+            }
+            
+            // Load saved data when page loads
+            window.addEventListener('load', () => {
+                // Initialize all example sections as collapsed
+                exampleSections.forEach(section => {
+                    section.classList.remove('expanded');
+                });
+                
+                // Check for localStorage availability
+                if (isLocalStorageAvailable()) {
+                    if (localStorage.getItem(STORAGE_KEY)) {
+                        // Automatic load of saved data
+                        loadDraft();
+                    } else {
+                        updateSaveStatus('No saved data.');
+                    }
+                } else {
+                    updateSaveStatus('Local storage not available.');
+                    showNotification('Warning: This browser doesn\'t support saving. Your data won\'t be saved.', 'warning');
+                }
+                
+                // Auto-resize textareas to fit content
+                document.querySelectorAll('textarea').forEach(textarea => {
+                    textarea.style.height = 'auto';
+                    textarea.style.height = (textarea.scrollHeight) + 'px';
+                });
+            });
+            
+            // Button event listeners
+            if(saveBtn) saveBtn.addEventListener('click', saveDraft);
+            if(loadBtn) loadBtn.addEventListener('click', loadDraft);
+            if(printBtn) printBtn.addEventListener('click', () => { window.print(); });
+            if(resetBtn) resetBtn.addEventListener('click', resetCanvas);
+            
+            // Auto-resize textareas as content grows
+            document.querySelectorAll('textarea').forEach(textarea => {
+                textarea.addEventListener('input', function() {
+                    this.style.height = 'auto';
+                    this.style.height = (this.scrollHeight) + 'px';
+                });
+            });
+        });
+    </script>
 </body>
 </html>
